@@ -35,24 +35,49 @@ def download_metadata(meta_id: int) -> pd.DataFrame:
     return metadata
 
 def process_raw_df(dataframe: pd.DataFrame, year: int) -> pd.DataFrame:
-    df = dataframe 
-    if year in [2014,2015]: #ustlamy odpowiednie nazwy kolumn, usuwamy metadane o pomiarach, plik z 2014 ma inny format.
-        df.columns = df.iloc[0]
-        df = df.drop([0,1,2])
-    else: 
-        df.columns = df.iloc[1]
-        df = df.drop([0,1,2,3,4,5])
-        
-    df['Measurment'] = pd.to_datetime(df.iloc[:,0])  # pierwsza kolumna -> datetime
-    df = df.set_index('Measurment')
-    df = df.drop(columns="Kod stacji")
-    df = df.apply(pd.to_numeric, errors='coerce') # zmieniamy object -> float
-    
-    midn_mask = df.index.hour == 0 
-    corrected_dates = df.index[midn_mask] - pd.Timedelta(seconds=1) #wszystkie wartości z północą przesuwamy o sekunde mniej
+    """Czyści surowy DataFrame z Excela GIOS i zwraca dane z indeksem czasowym."""
 
-    df.index.values[midn_mask] = corrected_dates
-    df = df.interpolate(method='time') #interpolujemy brakujące wartości
+    df = dataframe.copy()
+
+    # Pliki z różnych lat mają różny układ — szukamy wiersza, gdzie pojawia się "Kod stacji".
+    header_row = None
+    for row_i in range(len(df)):
+        row_values = df.iloc[row_i].astype(str).str.strip()
+        if (row_values == 'Kod stacji').any():
+            header_row = row_i
+            break
+
+    if header_row is None:
+        header_row = 0 if year in [2014, 2015] else 1
+
+    df.columns = df.iloc[header_row]
+    df = df.iloc[header_row + 1 :].copy()
+
+    time_col = df.columns[0]
+    df['Measurment'] = pd.to_datetime(df[time_col], errors='coerce')
+    df = df.drop(columns=[time_col]).set_index('Measurment')
+
+    if 'Kod stacji' in df.columns:
+        df = df.drop(columns=['Kod stacji'])
+
+    df = df.loc[~df.index.isna()].copy()
+
+    # Zostawiamy też poprzedni rok: po przesunięciu 01-01 00:00 -> 31-12 (year-1).
+    allowed_years = {year, year - 1}
+    df = df.loc[df.index.year.isin(allowed_years)].copy()
+
+    # Część plików używa przecinka jako separatora dziesiętnego.
+    for col in df.columns:
+        as_text = df[col].astype(str).str.replace(',', '.', regex=False)
+        df[col] = pd.to_numeric(as_text, errors='coerce')
+
+    # 00:00 traktujemy jako poprzedni dzień.
+    midnight = df.index.hour == 0
+    if midnight.any():
+        df.index = df.index.where(~midnight, df.index - pd.Timedelta(seconds=1))
+
+    df = df.sort_index()
+    df = df.interpolate(method='time')
 
     return df
 
