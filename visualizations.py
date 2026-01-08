@@ -4,6 +4,7 @@ Funkcje do wizualizacji.
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 
 def plot_city_trends(monthly_df: pd.DataFrame, years_to_plot: list[int], cities_to_plot: list[str]) -> None:
     trends_data = {}
@@ -29,6 +30,49 @@ def plot_city_trends(monthly_df: pd.DataFrame, years_to_plot: list[int], cities_
     ax.set_xticks(months)
     ax.legend(title='Miasto i Rok')
     ax.grid(True)
-    
     plt.tight_layout()
+    
+    plt.show()
+
+def plot_city_heatmap(city_monthly_avg: pd.DataFrame, YEARS: list[int]) -> None:
+    
+    # Tworzymy FacetGrid, gdzie każdy panel to jedno miasto
+    g = sns.FacetGrid(city_monthly_avg, col="City", col_wrap=4, height=4)
+    
+    # Mapujemy heatmapę na każdy panel
+    g.map_dataframe(
+        lambda data, color: sns.heatmap(
+            data.pivot(index='Year', columns='Month', values='PM25_Value'),
+            cmap='viridis'
+        )
+    )
+    
+    g.set_titles("{col_name}", size=14)
+    g.set_axis_labels("Miesiąc", "Rok")
+    
+    # Dynamiczny tytuł wykorzystujący zmienną YEARS
+    years_str = ", ".join(map(str, sorted(YEARS)))
+    g.figure.suptitle(f'Heatmapy średnich miesięcznych stężeń PM2.5 dla miast ({years_str})', size=20, y=1.03)
+    
+    plt.show()
+
+def plot_who_norm_barplot(plot_data_long: pd.DataFrame) -> None:
+    
+    plt.figure(figsize=(15, 8))
+    sns.barplot(
+        data=plot_data_long,
+        x='Station_Label',
+        y='Exceeding_Days',
+        hue='Year',
+        palette='viridis'
+    )
+    
+    plt.title('Liczba dni z przekroczeniem normy PM2.5 (15 µg/m³) dla wybranych stacji')
+    plt.xlabel('Stacja pomiarowa')
+    plt.ylabel('Liczba dni z przekroczeniem normy')
+    plt.xticks(rotation=45, ha='right')
+    plt.legend(title='Rok')
+    plt.grid(axis='y')  
+    plt.tight_layout()
+    
     plt.show()

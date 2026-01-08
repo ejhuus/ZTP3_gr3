@@ -33,4 +33,5 @@ NEW_STATION_NAME = 'Kod stacji'
 
 EX2_CITIES = ['Warszawa','Katowice']
 EX2_YEARS = [2015, 2024]
+EX4_YEAR = 2024
 
