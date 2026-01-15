@@ -70,16 +70,12 @@ def calculate_norm_exceeded_voivodeships(daily_means_df: pd.DataFrame, VOIVODESH
     """
 
     df_copy = daily_means_df.copy()
-
     # Czy dana stacja przekroczyła normę
     exceed_station = df_copy > WHO_NORM
-
     # Czy w mieście przynajmniej jedna stacja przekroczyła normę
     exceed_city = exceed_station.groupby(level='City', axis=1).any()
-
     # Czy w województwie przynajmniej jedno miasto miało przekroczenie
     exceed_voiv = exceed_city.groupby(VOIVODESHIPS, axis=1).any()
-
     # Zliczanie dni w latach
     exceeding_counts = (
         exceed_voiv
