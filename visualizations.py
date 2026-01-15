@@ -76,3 +76,29 @@ def plot_who_norm_barplot(plot_data_long: pd.DataFrame) -> None:
     plt.tight_layout()
     
     plt.show()
+
+def plot_voivod_exceeded(voivod_data: pd.DataFrame) -> None:
+    """Generuje barplot pokazujący liczbę dni z przekroczeniem normy stężenia PM2.5
+       dla każdego województwa
+
+    Args:
+        voivod_data (pd.DataFrame): dataframe ze zliczeniami dni z przekroczeniem normy PM2.5
+    """
+    
+    voivod_data.T.plot(
+        kind="bar",
+        figsize=(16, 6),
+        cmap="viridis"
+    )
+
+    plt.xlabel("Województwo")
+    plt.ylabel("Liczba dni z przekroczeniem normy PM2.5")
+    plt.title("Liczba dni w roku z przekroczeniem normy PM2.5 w każdym województwie")
+    plt.xticks(rotation=45, ha="right")
+    plt.legend(
+        title="Rok",
+        bbox_to_anchor=(1, 1),
+        loc="upper left"
+    )
+    plt.tight_layout()
+    plt.show()
