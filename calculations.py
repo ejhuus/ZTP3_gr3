@@ -54,3 +54,34 @@ def group_cities_yearly_and_monthly(long_df: pd.DataFrame) -> pd.DataFrame:
     city_monthly_avg = city_monthly_avg.reset_index()
 
     return city_monthly_avg
+
+def calculate_norm_exceeded_voivodeships(daily_means_df: pd.DataFrame, voivodships_map: dict, WHO_NORM: int, YEARS: list[int]) -> pd.DataFrame:
+    """Zlicza dla każdego województwa liczbę dni, w której przynajmniej jedno miasto przekroczyło normę PM2.5.
+
+
+    Args:
+        daily_means_df (pd.DataFrame): dataframe ze średnimi dziennymi stężeniami PM2.5
+        voivodships_map (dict): słownik mapujący miasta na województwa
+        WHO_NORM (int): norma WHO dla PM2.5 (15 µg/m³)
+        YEARS (list[int]): lista lat do analizy
+
+    Returns:
+        pd.DataFrame: dataframe z liczbą dni przekraczających normę PM2.5 dla każdego województwa
+    """
+
+    df_copy = daily_means_df.copy()
+    # Czy dana stacja przekroczyła normę
+    exceed_station = df_copy > WHO_NORM
+    # Czy w mieście przynajmniej jedna stacja przekroczyła normę
+    exceed_city = exceed_station.groupby(level='City', axis=1).any()
+    # Czy w województwie przynajmniej jedno miasto miało przekroczenie
+    exceed_voiv = exceed_city.groupby(voivodships_map, axis=1).any()
+    # Zliczanie dni w latach
+    exceeding_counts = (
+        exceed_voiv
+        .groupby(exceed_voiv.index.year)
+        .sum()
+        .loc[YEARS]
+    )
+
+    return exceeding_counts
