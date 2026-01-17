@@ -35,47 +35,6 @@ EX2_CITIES = ['Warszawa','Katowice']
 EX2_YEARS = [2015, 2024]
 EX4_YEAR = 2024
 
-VOIVODESHIPS = {
-    "Jelenia Góra": "dolnośląskie",
-    "Wrocław": "dolnośląskie",
-
-    "Bydgoszcz": "kujawsko-pomorskie",
-
-    "Lublin": "lubelskie",
-
-    "Łódź": "łódzkie",
-    "Zgierz": "łódzkie",
-
-    "Zielona Góra": "lubuskie",
-
-    "Kraków": "małopolskie",
-
-    "Legionowo": "mazowieckie",
-    "Piastów": "mazowieckie",
-    "Płock": "mazowieckie",
-    "Radom": "mazowieckie",
-    "Siedlce": "mazowieckie",
-    "Warszawa": "mazowieckie",
-    "Żyrardów": "mazowieckie",
-
-    "Kędzierzyn-Koźle": "opolskie",
-
-    "Białystok": "podlaskie",
-
-    "Przemyśl": "podkarpackie",
-
-    "Gdańsk": "pomorskie",
-    "Kościerzyna": "pomorskie",
-
-    "Katowice": "śląskie",
-    "Złoty Potok": "śląskie",
-
-    "Olsztyn": "warmińsko-mazurskie",
-
-    "Kalisz": "wielkopolskie",
-
-    "Szczecin": "zachodniopomorskie"
-}
 
 
 

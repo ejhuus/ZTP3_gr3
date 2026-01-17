@@ -125,3 +125,22 @@ def merge_years(dfs: dict, metadata: pd.DataFrame) -> pd.DataFrame:
 
     return merged
 
+def read_voivodeships(meta_id: int, dataframe: pd.DataFrame) -> dict[str, str]:
+    """Zczytanie województw dla miast obecnych w dataframe
+
+    Args:
+        meta_id (int): id do pobrania metadanych z GIOŚ
+        dataframe (pd.DataFrame): dataframe z danymi pomiarowymi
+
+    Returns:
+        dict[str, str]: mapowanie miasto -> województwo
+    """
+    metadata = download_metadata(meta_id)
+    voivodeships_df = metadata[['Miejscowość', 'Województwo']].drop_duplicates()
+    # Zostawiamy tylko te miasta, które są w podanym dataframe
+    voivodeships_df = voivodeships_df[voivodeships_df['Miejscowość'].isin(dataframe.columns.get_level_values('City'))]
+    voivodeship_map = dict(zip(voivodeships_df['Miejscowość'], voivodeships_df['Województwo']))
+
+    
+    return voivodeship_map
+
