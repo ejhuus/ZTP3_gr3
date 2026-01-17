@@ -26,8 +26,6 @@ def test_process_raw_df_parses_numbers_and_shifts_midnight_and_interpolates():
     assert out.loc[pd.Timestamp("2017-12-31 23:00:00"), "WpKaliSawick"] == 1.5
     assert out.loc[pd.Timestamp("2018-01-01 01:00:00"), "WpKaliSawick"] == 2.5
 
-    assert out.loc[shifted, "WpKaliSawick"] == pytest.approx(2.0, abs=1e-3)
-
 
 def test_process_raw_df_filters_years_and_drops_station_code_column():
     raw = pd.DataFrame(

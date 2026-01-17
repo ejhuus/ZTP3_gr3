@@ -77,7 +77,6 @@ def process_raw_df(dataframe: pd.DataFrame, year: int) -> pd.DataFrame:
         df.index = df.index.where(~midnight, df.index - pd.Timedelta(seconds=1))
 
     df = df.sort_index()
-    df = df.interpolate(method='time')
 
     return df
 
