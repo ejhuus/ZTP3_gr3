@@ -40,7 +40,6 @@ Dane są pobierane bezpośrednio z archiwów GIOŚ w formie plików ZIP lub exce
 * usuwanie niepoprawnych dat
 * konwersja indeksu dataframe na datetime
 * korekta pomiarów z godziny 00:00
-* interpolacja braków danych metodą czasową
 
 ### 3. Ujednolicenie kodów stacji
 
